@@ -1,0 +1,54 @@
+name: Daily Schedule Automation
+
+# TRIGGER: When should this workflow run?
+on:
+  schedule:
+    # Cron Format: 'Minute Hour Day Month DayOfWeek' (UTC Time)
+    # We want it at 07:00 AM WIB (Western Indonesia Time).
+    # Jakarta is UTC+7. So, 07:00 WIB - 7 hours = 00:00 UTC.
+    - cron: '0 0 * * *'
+  
+  # Allows you to run this workflow manually from the Actions tab (for testing)
+  workflow_dispatch:
+
+# JOBS: What tasks to execute?
+jobs:
+  run-schedule-bot:
+    runs-on: ubuntu-latest # Uses a standard Ubuntu runner provided by GitHub
+    
+    steps:
+      # 1. Checkout repository code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        
+      # 2. Set up Python environment
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11' # Matches your environment
+          
+      # 3. Install required libraries
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          # Installing specific libraries used in automation_daily_schedule.py
+          pip install prefect python-dotenv google-api-python-client google-auth-httplib2 google-auth-oauthlib python-telegram-bot
+        
+      # 4. Create token.json for Google Calendar API
+      # The Python script looks for a local 'token.json' file.
+      # We create it dynamically using the secret stored in GitHub.
+      - name: Create Google Token JSON
+        env:
+          GOOGLE_TOKEN_DATA: ${{ secrets.GOOGLE_TOKEN_JSON }}
+        run: echo "$GOOGLE_TOKEN_DATA" > token.json
+
+      # 5. RUN THE SCRIPT
+      # We inject the Telegram secrets securely into the environment here
+      - name: Run Schedule Bot Script
+        env:
+          # These match os.getenv("...") in your Python script
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        
+        # Execute the python file
+        run: python automation_daily_schedule.py
