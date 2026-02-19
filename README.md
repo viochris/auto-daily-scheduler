@@ -23,9 +23,10 @@ Orchestrated by **Prefect**, this bot acts as your personal time manager. It per
 
 ## ⚠️ Current Limitations & Disclaimer
 Please be aware of the following limitations in the current version:
-1. **Token Expiration:** The system relies on a local `token.json` file for Google OAuth2 authentication. If the refresh token expires or is revoked, manual re-authentication is required.
-2. **Fixed Timezone:** The time boundary extraction is currently hardcoded to fetch events using the `+07:00` (WIB/Jakarta) timezone offset.
-3. **Event Types:** This script only fetches Calendar Events. It does not retrieve Google Tasks or automated Contact Birthdays due to API architectural differences.
+1. **Authentication Setup:** Requires manual initial setup to generate the 'token.json' file via Google Cloud Console before the script can run autonomously.
+2. **Token Expiration:** The system relies on a local `token.json` file for Google OAuth2 authentication. If the refresh token expires or is revoked, manual re-authentication is required.
+3. **Fixed Timezone:** The time boundary extraction is currently hardcoded to fetch events using the `+07:00` (WIB/Jakarta) timezone offset.
+4. **Event Types:** This script only fetches Calendar Events. It does not retrieve Google Tasks or automated Contact Birthdays due to API architectural differences.
 
 ## 🛠️ Tech Stack
 * **Orchestrator:** Prefect (Workflow Management)
